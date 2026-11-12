@@ -3,10 +3,8 @@
 A playable virtual-portfolio league game. Each player starts with **₪1,000,000**,
 buys and sells TA + US securities, and competes on a **weekly leaderboard (Mon–Fri)**.
 
-**Live link:** _TODO — add the deployed link here before submitting (must open in a
-browser with no install)._
-**Repo:** public GitHub repo with write access for `rotemyavne7` — _TODO: verify
-the permission, don't assume it._
+**Live link:** https://dolevhasidim.github.io/portfolio-league/ (opens in a browser, no install).
+**Repo:** https://github.com/Dolevhasidim/portfolio-league — public, with write access for `rotemyavne7` (invite sent, pending his acceptance — verified in Manage access).
 
 ## How to play
 
@@ -71,7 +69,7 @@ and streak-length distribution.
 
 ## Production readiness — summary
 
-Full plan in [`production-plan-draft.md`](production-plan-draft.md). In short:
+Full plan in [`production-plan.md`](production-plan.md). In short:
 scale the price feed and leaderboard computation (cache prices, precompute
 boards), make orders idempotent with an audit log, ship with preview envs,
 feature flags and a rollback path, alert on an error budget with an on-call
@@ -80,11 +78,11 @@ runbook, and keep everything inside free-tier caps.
 ## Status / submission checklist
 
 - [x] Playable prototype (single-file demo): buy/sell, 20% limit, leaderboard,
-      world clock, morning briefing + streak — `ligat-tikim-prototype.html`
+      world clock, morning briefing + streak — `index.html`
 - [ ] Port to the submission stack (TypeScript, React Native / Expo, Firebase,
       Vercel) — the prototype proves the rules and scoring, it is not the
       submission stack
-- [ ] Public GitHub repo, `rotemyavne7` has write access (check, don't assume)
-- [ ] Live link opens in a browser, no install, playable end-to-end
-- [ ] Every rule re-checked against the PDF
+- [x] Public GitHub repo, `rotemyavne7` invited with write access (invite pending his acceptance)
+- [x] Live link opens in a browser, no install, playable end-to-end
+- [x] Every rule re-checked against the PDF (2026-11-12)
 - [ ] Submitted before Thu 2026-11-12, 23:59 (Thu 20:00 tennis cancelled, evening free — no 20:00 constraint)

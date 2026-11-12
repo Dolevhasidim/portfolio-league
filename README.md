@@ -1,10 +1,12 @@
-# ליגת תיקים — Portfolio League
+# ליגת התיקים — Portfolio League
 
 A playable virtual-portfolio league game. Each player starts with **₪1,000,000**,
 buys and sells TA + US securities, and competes on a **weekly leaderboard (Mon–Fri)**.
 
-**Live link:** https://dolevhasidim.github.io/portfolio-league/
-**Repo:** https://github.com/Dolevhasidim/portfolio-league — public GitHub repo with Write access for `rotemyavne7` (invite sent, pending acceptance).
+**Live link:** _TODO — add the deployed link here before submitting (must open in a
+browser with no install)._
+**Repo:** public GitHub repo with write access for `rotemyavne7` — _TODO: verify
+the permission, don't assume it._
 
 ## How to play
 

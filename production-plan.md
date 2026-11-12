@@ -1,4 +1,4 @@
-# Production readiness plan — ליגת תיקים (Part 3)
+# Production readiness plan — ליגת התיקים (Part 3)
 
 Scenario from the assignment: tomorrow this goes live, you're the only ones
 responsible — thousands of players, spikes at market open and after pushes,

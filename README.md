@@ -3,8 +3,8 @@
 A playable virtual-portfolio league game. Each player starts with **₪1,000,000**,
 buys and sells TA + US securities, and competes on a **weekly leaderboard (Mon–Fri)**.
 
-**Live link:** https://dolevhasidim.github.io/ligat-tikim/
-**Repo:** https://github.com/Dolevhasidim/ligat-tikim — public GitHub repo with Write access for `rotemyavne7` (invite sent, pending acceptance).
+**Live link:** https://dolevhasidim.github.io/portfolio-league/
+**Repo:** https://github.com/Dolevhasidim/portfolio-league — public GitHub repo with Write access for `rotemyavne7` (invite sent, pending acceptance).
 
 ## How to play
 

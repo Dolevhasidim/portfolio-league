@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ליגת תיקים — Portfolio League (prototype)</title>
+<style>
+  body{font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;margin:0;background:#0f172a;color:#e2e8f0}
+  header{padding:18px 22px;background:#1e293b;border-bottom:1px solid #334155}
+  h1{margin:0;font-size:22px} p.sub{margin:4px 0 0;color:#94a3b8;font-size:13px}
+  main{max-width:1060px;margin:0 auto;padding:16px}
+  .cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px;margin:12px 0}
+  .card{background:#1e293b;border:1px solid #334155;border-radius:10px;padding:12px}
+  .card b{font-size:20px;display:block} .card span{color:#94a3b8;font-size:12px}
+  .brief{background:#0c4a6e;border:1px solid #0369a1;border-radius:10px;padding:14px;margin:12px 0}
+  .brief h2,.panel h2{margin:0 0 8px;font-size:16px}
+  .panel{background:#1e293b;border:1px solid #334155;border-radius:10px;padding:14px;margin:12px 0}
+  table{width:100%;border-collapse:collapse;font-size:14px}
+  th,td{padding:7px 6px;border-bottom:1px solid #334155;text-align:right}
+  th{color:#94a3b8;font-size:12px} .up{color:#4ade80}.down{color:#f87171}
+  input[type=number]{width:110px;padding:6px;border-radius:6px;border:1px solid #475569;background:#0f172a;color:#e2e8f0}
+  button{padding:7px 12px;border-radius:8px;border:0;background:#0284c7;color:#fff;cursor:pointer;font-weight:600}
+  button.secondary{background:#334155} button:disabled{opacity:.45;cursor:default}
+  .row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+  .muted{color:#94a3b8;font-size:13px} ol{margin:6px 0;padding-right:20px}
+  .warn{color:#fbbf24}
+</style>
+</head>
+<body>
+<header>
+  <h1>ליגת תיקים — Portfolio League</h1>
+  <p class="sub">Prototype (single file, no install) · ₪1,000,000 starting capital · Weekly league Mon–Fri · Score = 0.85 × return percentile + 0.15 × stability percentile</p>
+</header>
+<main>
+  <div class="cards">
+    <div class="card"><span>World day</span><b id="dayLabel">Monday — Day 1 / 5</b></div>
+    <div class="card"><span>Cash (ILS)</span><b id="cash">₪1,000,000</b></div>
+    <div class="card"><span>Portfolio value</span><b id="value">₪1,000,000</b></div>
+    <div class="card"><span>Total return</span><b id="ret">0.00%</b></div>
+    <div class="card"><span>Your rank / score</span><b id="rank">—</b></div>
+    <div class="card"><span>USD–ILS</span><b id="fx">3.65</b></div>
+  </div>
+
+  <div class="brief">
+    <h2>☀️ Morning briefing — 30 seconds (retention feature A)</h2>
+    <div id="briefing">Welcome to the league. Place your first orders below — they execute at today's close. Advance the day to see them fill and get tomorrow's briefing.</div>
+    <p class="muted" id="streak">Visit streak: 1 day</p>
+  </div>
+
+  <div class="panel">
+    <h2>Place orders — execute at today's close (no cancellation, no short, max 20% of portfolio in one security at purchase)</h2>
+    <p class="muted">Orders queue up and fill at the close when you advance the day. Outside trading hours they would fill at the next trading day's open — in this prototype, advancing the day is the close.</p>
+    <table>
+      <thead><tr><th>Security</th><th>Market</th><th>Price (ILS)</th><th>Today</th><th>You hold</th><th>Amount (₪)</th><th></th><th></th></tr></thead>
+      <tbody id="market"></tbody>
+    </table>
+    <h3>Pending orders (fill at close)</h3>
+    <ol id="pending"><li class="muted">None yet.</li></ol>
+    <div class="row">
+      <button id="advance">Advance to next day → (execute orders at close)</button>
+      <button class="secondary" id="reset">Reset week</button>
+    </div>
+    <p class="muted" id="log"></p>
+  </div>
+
+  <div class="panel">
+    <h2>Weekly leaderboard</h2>
+    <table><thead><tr><th>#</th><th>Player</th><th>Return</th><th>Max drawdown</th><th>Score</th></tr></thead><tbody id="board"></tbody></table>
+    <p class="muted">Bots are simulated rivals. Stability percentile rewards the smaller max drawdown. Percentiles are ranked across the 4 players.</p>
+  </div>
+
+  <div class="panel">
+    <h2>Rules (verify against the assignment PDF before submitting)</h2>
+    <table>
+      <tr><th>Starting capital</th><td>₪1,000,000</td></tr>
+      <tr><th>World</th><td>20 securities (TA + US), prices over time, USD–ILS rate, advancable world clock</td></tr>
+      <tr><th>Buy / sell</th><td>In shekels, fractions allowed</td></tr>
+      <tr><th>Order in trading hours</th><td>Executes at that day's close</td></tr>
+      <tr><th>Order outside trading hours</th><td>Executes at next trading day's open, no cancellation</td></tr>
+      <tr><th>Short / leverage</th><td>Not allowed</td></tr>
+      <tr><th>Max single position</th><td>20% of portfolio at purchase</td></tr>
+      <tr><th>Leaderboard</th><td>Weekly, Mon–Fri</td></tr>
+      <tr><th>Score</th><td>0.85 × return percentile + 0.15 × stability percentile (smaller max drawdown = better)</td></tr>
+    </table>
+    <p class="muted">Prototype note: this is a playable game-logic demo in one HTML file, not the Expo / Firebase / Vercel submission stack. It proves the rules, scoring and the morning-briefing feature; the submission still needs a public GitHub repo with write access for rotemyavne7, a live link, and every rule re-checked against the PDF.</p>
+  </div>
+</main>
+<script>
+const DAYS = ["Monday","Tuesday","Wednesday","Thursday","Friday"];
+const SECS = [
+  // TA, prices in ILS
+  {sym:"TEVA", name:"Teva", mkt:"TA", cur:"ILS", price:55},
+  {sym:"POLI", name:"Bank Hapoalim", mkt:"TA", cur:"ILS", price:38},
+  {sym:"LUMI", name:"Bank Leumi", mkt:"TA", cur:"ILS", price:32},
+  {sym:"DSCT", name:"Israel Discount Bank", mkt:"TA", cur:"ILS", price:22},
+  {sym:"MZTF", name:"Mizrahi-Tefahot", mkt:"TA", cur:"ILS", price:145},
+  {sym:"NICE", name:"Nice", mkt:"TA", cur:"ILS", price:620},
+  {sym:"ESLT", name:"Elbit Systems", mkt:"TA", cur:"ILS", price:950},
+  {sym:"TSEM", name:"Tower Semiconductor", mkt:"TA", cur:"ILS", price:140},
+  {sym:"ICL", name:"ICL Group", mkt:"TA", cur:"ILS", price:18},
+  {sym:"ENRG", name:"Energix", mkt:"TA", cur:"ILS", price:14},
+  // US, prices in USD
+  {sym:"AAPL", name:"Apple", mkt:"US", cur:"USD", price:260},
+  {sym:"MSFT", name:"Microsoft", mkt:"US", cur:"USD", price:520},
+  {sym:"NVDA", name:"Nvidia", mkt:"US", cur:"USD", price:180},
+  {sym:"GOOGL", name:"Alphabet", mkt:"US", cur:"USD", price:280},
+  {sym:"AMZN", name:"Amazon", mkt:"US", cur:"USD", price:230},
+  {sym:"TSLA", name:"Tesla", mkt:"US", cur:"USD", price:430},
+  {sym:"SPY", name:"S&P 500 ETF", mkt:"US", cur:"USD", price:650},
+  {sym:"QQQ", name:"Nasdaq-100 ETF", mkt:"US", cur:"USD", price:620},
+  {sym:"BRK.B", name:"Berkshire Hathaway", mkt:"US", cur:"USD", price:480},
+  {sym:"JNJ", name:"Johnson & Johnson", mkt:"US", cur:"USD", price:160}
+];
+const START = 1000000;
+let S;
+function freshState(){
+  return {day:0, fx:3.65, cash:START, holdings:{}, pending:[], peak:START,
+    dd:0, prevRank:4, streak:1, prices:Object.fromEntries(SECS.map(s=>[s.sym,s.price])),
+    prevPrices:Object.fromEntries(SECS.map(s=>[s.sym,s.price])),
+    bots:[
+      {name:"Noa (bot)", ret:0, dd:0.004, peak:START, val:START},
+      {name:"Omar (bot)", ret:0, dd:0.009, peak:START, val:START},
+      {name:"Maya (bot)", ret:0, dd:0.002, peak:START, val:START}
+    ], log:[]};
+}
+S = freshState();
+const ils = s => s.cur==="USD" ? s.price*S.fx : s.price; // display price in ILS (US price x fx)
+const fmt = n => "₪" + Math.round(n).toLocaleString("en-US");
+const pct = n => (n*100).toFixed(2)+"%";
+function portValue(){
+  let v = S.cash;
+  for (const [sym, units] of Object.entries(S.holdings)){
+    const sec = SECS.find(x=>x.sym===sym);
+    v += units * (sec.cur==="USD" ? S.prices[sym]*S.fx : S.prices[sym]);
+  }
+  return v;
+}
+function render(){
+  document.getElementById("dayLabel").textContent = DAYS[S.day]+" — Day "+(S.day+1)+" / 5";
+  document.getElementById("cash").textContent = fmt(S.cash);
+  const v = portValue();
+  document.getElementById("value").textContent = fmt(v);
+  document.getElementById("ret").textContent = pct((v-START)/START);
+  document.getElementById("fx").textContent = S.fx.toFixed(2);
+  document.getElementById("streak").textContent = "Visit streak: "+S.streak+" day"+(S.streak>1?"s":"")+" — come back tomorrow for the next briefing.";
+  const tb = document.getElementById("market"); tb.innerHTML="";
+  for (const sec of SECS){
+    const p = sec.cur==="USD" ? S.prices[sec.sym]*S.fx : S.prices[sec.sym];
+    const prev = sec.cur==="USD" ? S.prevPrices[sec.sym]*S.fx : S.prevPrices[sec.sym];
+    const chg = (p-prev)/prev;
+    const held = S.holdings[sec.sym]||0;
+    const tr = document.createElement("tr");
+    tr.innerHTML = "<td><b>"+sec.sym+"</b> "+sec.name+"</td><td>"+sec.mkt+"</td><td>"+fmt(p)+"</td>"+
+      "<td class='"+(chg>=0?"up":"down")+"'>"+(chg>=0?"+":"")+pct(chg)+"</td><td>"+held.toFixed(3)+" units · "+fmt(held*p)+"</td>"+
+      "<td><input type='number' min='0' step='100' id='amt-"+sec.sym+"' placeholder='₪ amount'></td>"+
+      "<td><button data-buy='"+sec.sym+"'>Buy</button></td><td><button class='secondary' data-sell='"+sec.sym+"'>Sell</button></td>";
+    tb.appendChild(tr);
+  }
+  tb.querySelectorAll("[data-buy]").forEach(b=>b.onclick=()=>placeOrder(b.dataset.buy,"buy"));
+  tb.querySelectorAll("[data-sell]").forEach(b=>b.onclick=()=>placeOrder(b.dataset.sell,"sell"));
+  const pl = document.getElementById("pending");
+  pl.innerHTML = S.pending.length ? "" : "<li class='muted'>None yet.</li>";
+  S.pending.forEach(o=>{ const li=document.createElement("li"); li.textContent=o.side.toUpperCase()+" "+fmt(o.amount)+" of "+o.sym+" — fills at today's close."; pl.appendChild(li); });
+  document.getElementById("log").textContent = S.log.slice(-3).join("  ·  ");
+  renderBoard();
+  document.getElementById("advance").disabled = S.day>=4;
+  document.getElementById("advance").textContent = S.day>=4 ? "Week over — reset to play again" : "Advance to next day → (execute orders at close)";
+}
+function placeOrder(sym, side){
+  const inp = document.getElementById("amt-"+sym);
+  const amount = parseFloat(inp.value);
+  if(!amount || amount<=0){ alert("Enter an amount in ₪ first."); return; }
+  const sec = SECS.find(x=>x.sym===sym);
+  const p = sec.cur==="USD" ? S.prices[sym]*S.fx : S.prices[sym];
+  const v = portValue();
+  if(side==="buy"){
+    if(amount > S.cash){ alert("Not enough cash — you have "+fmt(S.cash)+"."); return; }
+    const existing = (S.holdings[sym]||0)*p;
+    if(existing + amount > 0.20*v){ alert("Rule: max 20% of portfolio in one security at purchase (limit "+fmt(0.20*v)+")."); return; }
+  } else {
+    const heldVal = (S.holdings[sym]||0)*p;
+    if(amount > heldVal){ alert("No short selling — you hold "+fmt(heldVal)+" of "+sym+"."); return; }
+  }
+  S.pending.push({sym, side, amount});
+  inp.value=""; render();
+}
+function percentileRank(values, mine, higherBetter){
+  const sorted = [...values].sort((a,b)=> higherBetter ? b-a : a-b);
+  const rank = sorted.indexOf(mine); // 0 = best
+  return values.length<=1 ? 1 : 1 - rank/(values.length-1);
+}
+function scores(){
+  const v = portValue();
+  const myRet = (v-START)/START;
+  const players = [{name:"You", ret:myRet, dd:S.dd}].concat(S.bots.map(b=>({name:b.name, ret:b.ret, dd:b.dd})));
+  const rets = players.map(p=>p.ret), dds = players.map(p=>p.dd);
+  return players.map(p=>({...p,
+    retPct: percentileRank(rets, p.ret, true),
+    stabPct: percentileRank(dds, p.dd, false),
+    score: 0.85*percentileRank(rets, p.ret, true) + 0.15*percentileRank(dds, p.dd, false)
+  })).sort((a,b)=>b.score-a.score);
+}
+function renderBoard(){
+  const rows = scores();
+  const tb = document.getElementById("board"); tb.innerHTML="";
+  rows.forEach((p,i)=>{
+    const tr=document.createElement("tr");
+    tr.innerHTML="<td>"+(i+1)+"</td><td>"+p.name+"</td><td class='"+(p.ret>=0?"up":"down")+"'>"+pct(p.ret)+"</td><td>"+pct(p.dd)+"</td><td><b>"+p.score.toFixed(3)+"</b></td>";
+    tb.appendChild(tr);
+  });
+  const myRank = rows.findIndex(p=>p.name==="You")+1;
+  document.getElementById("rank").textContent = "#"+myRank+" / 4 · "+rows.find(p=>p.name==="You").score.toFixed(3);
+  S._rank = myRank;
+}
+function advance(){
+  if(S.day>=4) return;
+  // Execute pending orders at the close (new prices drawn first = close prices)
+  S.prevPrices = {...S.prices};
+  for (const sec of SECS){
+    const move = (Math.random()*0.06-0.03); // -3%..+3% daily
+    S.prices[sec.sym] = Math.max(0.5, sec.price===undefined? sec.price : S.prices[sec.sym]*(1+move));
+  }
+  S.fx = Math.max(3.2, Math.min(4.0, S.fx*(1+(Math.random()*0.01-0.005))));
+  for (const o of S.pending){
+    const sec = SECS.find(x=>x.sym===o.sym);
+    const p = sec.cur==="USD" ? S.prices[o.sym]*S.fx : S.prices[o.sym];
+    const units = o.amount/p;
+    if(o.side==="buy"){ S.cash-=o.amount; S.holdings[o.sym]=(S.holdings[o.sym]||0)+units; }
+    else { S.cash+=o.amount; S.holdings[o.sym]=(S.holdings[o.sym]||0)-units; }
+    S.log.push(o.side.toUpperCase()+" "+fmt(o.amount)+" "+o.sym+" @ "+fmt(p));
+  }
+  S.pending=[];
+  const v = portValue();
+  S.peak = Math.max(S.peak, v);
+  S.dd = Math.max(S.dd, (S.peak-v)/S.peak);
+  S.bots.forEach(b=>{ b.ret += (Math.random()*0.05-0.02); b.val = START*(1+b.ret); b.peak=Math.max(b.peak,b.val); b.dd=Math.max(b.dd,(b.peak-b.val)/b.peak); });
+  S.day++; S.streak++;
+  // Morning briefing for the new day
+  let topSym=null, topChg=-99;
+  for (const sec of SECS){
+    const p = sec.cur==="USD" ? S.prices[sec.sym]*S.fx : S.prices[sec.sym];
+    const prev = sec.cur==="USD" ? S.prevPrices[sec.sym]*S.fx : S.prevPrices[sec.sym];
+    const c=(p-prev)/prev; if(c>topChg){topChg=c; topSym=sec.sym+" ("+sec.name+")";}
+  }
+  renderBoard();
+  const rank = S._rank;
+  const move = rank < S.prevRank ? "up "+(S.prevRank-rank)+" place(s)" : rank > S.prevRank ? "down "+(rank-S.prevRank)+" place(s)" : "unchanged";
+  S.prevRank = rank;
+  const suggestion = topChg>0.02 ? "Biggest mover "+topSym+" is up "+pct(topChg)+" — consider taking a small position, within the 20% rule." : "No big overnight move — the biggest gainer was "+topSym+" ("+pct(topChg)+"). A quiet day is a good day to check your drawdown, not to chase.";
+  document.getElementById("briefing").innerHTML =
+    "<b>Good morning — "+DAYS[S.day]+".</b> Overnight, "+topSym+" moved most ("+(topChg>=0?"+":"")+pct(topChg)+"). "+
+    "You are now #"+rank+" of 4 on the leaderboard ("+move+"), portfolio "+fmt(portValue())+" ("+pct((portValue()-START)/START)+"). "+
+    "<b>One action:</b> "+suggestion;
+  render();
+}
+document.getElementById("advance").onclick = advance;
+document.getElementById("reset").onclick = ()=>{ S=freshState(); document.getElementById("briefing").textContent="Week reset. Place your first orders below — they execute at today's close."; render(); };
+render();
+</script>
+</body>
+</html>
